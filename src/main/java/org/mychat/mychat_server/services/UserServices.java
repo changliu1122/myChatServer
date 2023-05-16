@@ -4,4 +4,9 @@ import org.mychat.mychat_server.pojo.User;
 
 public interface UserServices {
     User getUserById(String id);
+
+
+    User queryUsername(String username);
+
+    User signUp(User user);
 }
