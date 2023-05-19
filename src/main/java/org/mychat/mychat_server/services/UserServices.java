@@ -8,5 +8,7 @@ public interface UserServices {
 
     User queryUsername(String username);
 
-    User signUp(User user);
+    User insert(User user);
+
+
 }

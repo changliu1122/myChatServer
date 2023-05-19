@@ -26,9 +26,10 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public User signUp(User user) {
+    public User insert(User user) {
         user.setId(snowFlake.getString_nextId());
         userMapper.insert(user);
         return user;
     }
+
 }
