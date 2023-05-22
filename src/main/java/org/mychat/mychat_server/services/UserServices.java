@@ -18,7 +18,7 @@ public interface UserServices {
 
     int checkPrecondition(String myId, String friendUserName);
 
-    void sendFriendRequest(String myId, String friendUserName);
+    int sendFriendRequest(String myId, String friendUserName);
 
     List<FriendsRequestVo> queryFriendRequests(String myId);
 

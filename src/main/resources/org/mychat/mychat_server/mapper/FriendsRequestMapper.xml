@@ -22,6 +22,16 @@
   </delete>
 
 
+  <!--    check if request is already exist-->
+  <select id="queryRepeatRequest" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from friends_request fr
+    where fr.send_user_id = #{myId,jdbcType=VARCHAR} and accept_user_id =#{accept_user_id}
+  </select>
+
+
+
 <!--  delete entry from friend request when friend request was handled, whether accept or decline-->
   <delete id="deleteFriendRequest" parameterType="org.mychat.mychat_server.pojo.FriendsRequest">
     delete from friends_request

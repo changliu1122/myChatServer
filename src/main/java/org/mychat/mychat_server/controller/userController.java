@@ -112,9 +112,13 @@ public class userController {
     @ResponseBody
     public MyChatServerJSONResult sendFriendRequest( @RequestParam String myId,@RequestParam String friendUserName){
 
-        userServices.sendFriendRequest(myId,friendUserName);
+        var result = userServices.sendFriendRequest(myId,friendUserName);
+        if(result == 0){
+            return MyChatServerJSONResult.errorMsg("Request already sent!");
+        }
         return MyChatServerJSONResult.ok();
     }
+
 
     //check friend request list
     @RequestMapping("/queryFriendRequest")

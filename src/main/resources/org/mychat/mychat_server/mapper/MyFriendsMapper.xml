@@ -16,7 +16,6 @@
     where id = #{id,jdbcType=VARCHAR}
   </select>
 
-
 <!--  check if two ids are friend-->
   <select id="selectOneByExample" parameterType="org.mychat.mychat_server.pojo.MyFriends" resultMap="BaseResultMap">
     select

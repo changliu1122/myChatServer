@@ -14,6 +14,7 @@ import org.mychat.mychat_server.vo.MyFriendsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -76,18 +77,24 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public void sendFriendRequest(String myId, String friendUserName) {
+    public int sendFriendRequest(String myId, String friendUserName) {
         User friend = userMapper.queryUsername(friendUserName);
-        if(friend != null){
+        String accept_user_id = friend.getId();
+        //check if request already exist!
+        List<String> repeatRequests = friendsRequestMapper.queryRepeatRequest(myId,accept_user_id);
+        //does not exist keep going!
+        if(repeatRequests.isEmpty()){
             FriendsRequest friendsRequest = new FriendsRequest();
             String id = snowFlake.getString_nextId();
-
             friendsRequest.setId(id);
             friendsRequest.setSendUserId(myId);
             friendsRequest.setAcceptUserId(friend.getId());
             friendsRequest.setRequestDateTime(new Date());
             friendsRequestMapper.insert(friendsRequest);
+            return 1;
         }
+        //does exist
+        return 0;
     }
 
     @Override
