@@ -14,4 +14,6 @@ public interface MyFriendsMapper {
     int updateByPrimaryKeySelective(MyFriends row);
 
     int updateByPrimaryKey(MyFriends row);
+
+    MyFriends selectOneByExample(MyFriends myFriend);
 }

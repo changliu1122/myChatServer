@@ -1,15 +1,19 @@
 package org.mychat.mychat_server.controller;
-
+import org.mychat.mychat_server.pojo.FriendsRequest;
 import org.mychat.mychat_server.pojo.User;
 import org.mychat.mychat_server.services.UserServices;
 import org.mychat.mychat_server.utils.MD5Utils;
 import org.mychat.mychat_server.utils.MyChatServerJSONResult;
+import org.mychat.mychat_server.vo.FriendsRequestVo;
+import org.mychat.mychat_server.vo.MyFriendsVo;
 import org.mychat.mychat_server.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @Controller
@@ -23,7 +27,6 @@ public class userController {
     @RequestMapping("/getUser")
     public String getUserById(String id, Model model){
         var user = userServices.getUserById(id);
-
         model.addAttribute("user",user);
         return "user_list";
     }
@@ -79,6 +82,78 @@ public class userController {
         }
         return new MyChatServerJSONResult(200,"Welcome! Now login and start chatting!",null);
     }
+
+    @RequestMapping("/searchFriend")
+    @ResponseBody
+    public MyChatServerJSONResult searchFriend(@RequestParam String myId, @RequestParam String friendUserName){
+
+        int status = userServices.checkPrecondition(myId,friendUserName);
+
+        switch (status) {
+            case 0 -> {//friend exist?
+                return MyChatServerJSONResult.errorMsg("Friend does not exist");
+            }
+            case 1 -> {//friend is myself?
+                return MyChatServerJSONResult.errorMsg("Can not add yourself");
+            }
+            case 2 -> {//already your friend?
+                return MyChatServerJSONResult.errorMsg("You are already friends");
+            }
+            default -> { // a valid friend request
+                User friend = userServices.queryUsername(friendUserName);
+                UserVo userVo = new UserVo();
+                BeanUtils.copyProperties(friend, userVo);
+                return MyChatServerJSONResult.ok(userVo);
+            }
+        }
+    }
+
+    @RequestMapping("/sendFriendRequest")
+    @ResponseBody
+    public MyChatServerJSONResult sendFriendRequest( @RequestParam String myId,@RequestParam String friendUserName){
+
+        userServices.sendFriendRequest(myId,friendUserName);
+        return MyChatServerJSONResult.ok();
+    }
+
+    //check friend request list
+    @RequestMapping("/queryFriendRequest")
+    @ResponseBody
+    public MyChatServerJSONResult queryFriendRequests (@RequestBody String myId){
+        //may have many friend requests
+
+        List<FriendsRequestVo> list = userServices.queryFriendRequests(myId);
+        return MyChatServerJSONResult.ok(list);
+    }
+
+
+    //ignore or accept friend request
+    @RequestMapping("/operFriendRequest")
+    @ResponseBody
+    public MyChatServerJSONResult opFriendRequest(@RequestBody String acceptUserId, String sendUserId, Integer op){
+        FriendsRequest friendsRequest = new FriendsRequest();
+        friendsRequest.setSendUserId(sendUserId);
+        friendsRequest.setAcceptUserId(acceptUserId);
+        //op == 0 decline; op == 1 accept
+        if(op == 1){
+            userServices.passFriendRequest(friendsRequest);
+        }
+        //whether accept or decline, the entry should be removed
+        userServices.declineFriendRequest(friendsRequest);
+
+        List<FriendsRequestVo> list = userServices.queryFriendRequests(acceptUserId);
+        return MyChatServerJSONResult.ok(list);
+    }
+
+    // for contact list rendering
+    @RequestMapping("/myFriends")
+    @ResponseBody
+    public MyChatServerJSONResult queryFriendList(@RequestBody String myId){
+
+        List<MyFriendsVo> list = userServices.queryFriendList(myId);
+        return MyChatServerJSONResult.ok(list);
+    }
+
 
 
 }

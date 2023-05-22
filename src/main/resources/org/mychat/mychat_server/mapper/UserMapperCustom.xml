@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mychat.mychat_server.mapper.UserMapperCustom">
+ <select id="queryFriendRequestList" parameterType="String" resultType="org.mychat.mychat_server.vo.FriendsRequestVo">
+
+        select
+                cu.id as Id,
+                cu.username as username,
+                cu.face_image as faceImage,
+                cu.nickname as nickname
+
+            from myChatDB.friends_request fr
+            left join myChatDB.chat_users cu
+            on fr.send_user_id = cu.id
+            where fr.accept_user_id = #{acceptUserId}
+
+ </select>
+
+<!--    好友列表的查询也需要 join myfriend 和 chat user 两个表， 通过每个myfriend id  找到对应的 chat user entry 并返回到前端-->
+    <select id="queryFriendList" parameterType="String" resultType="org.mychat.mychat_server.vo.MyFriendsVo">
+            select
+# 最后把chatuser中的属性映射到java类中 最后封装成object 返回给前段
+               cu.id as friendUserId,
+               cu.username as friendUsername,
+               cu.face_image as friendFaceImage,
+               cu.nickname as friendNickname
+#  然后我的每个朋友 都映射到chatuser中
+                from myChatDB.my_friends my
+                left join myChatDB.chat_users cu
+                on my.my_friend_user_id = cu.id
+# 首先通过 我自己的id 找到所有我的朋友的id
+                where my.my_user_id = #{myId}
+    </select>
+
+</mapper>

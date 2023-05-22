@@ -17,4 +17,8 @@ vo class for display user information without leek sensitive info, zB password w
 Beanutil.copyproperties copy properties of an object to make another object of other class
 
 
-axios.post 传参时， 后端接口 方法 参数要标注 @requestbody 不然格式不对
+1.axios.post with data 传参时， 后端接口方法 参数要标注 @requestbody 且只有第一个参数可以接收到， axios 传过来的参数 java 会封装成 一个类 并对应赋值， 所以@requestbody 只能标记一个参数
+2.axios.post with params 传参数, 后端接口方法列表中必须写对应的formal param，一一对应，每一个都要标注@requestparams
+
+@RequestParam注解，默认接收Content-Type: application/x-www-form-urlencoded编码格式的数据
+@RequestBody注解，默认接收JSON类型格式的数据。
