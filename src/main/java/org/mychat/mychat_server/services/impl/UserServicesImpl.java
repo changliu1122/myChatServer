@@ -1,10 +1,10 @@
 package org.mychat.mychat_server.services.impl;
 
 import IdGenerator.ModifiedSnowFlake;
-import org.mychat.mychat_server.mapper.FriendsRequestMapper;
-import org.mychat.mychat_server.mapper.MyFriendsMapper;
-import org.mychat.mychat_server.mapper.UserMapper;
-import org.mychat.mychat_server.mapper.UserMapperCustom;
+import org.mychat.mychat_server.enums.MsgSignFlagEnum;
+import org.mychat.mychat_server.mapper.*;
+import org.mychat.mychat_server.netty.ChatMSG;
+import org.mychat.mychat_server.pojo.ChatMsg;
 import org.mychat.mychat_server.pojo.FriendsRequest;
 import org.mychat.mychat_server.pojo.MyFriends;
 import org.mychat.mychat_server.pojo.User;
@@ -29,6 +29,9 @@ public class UserServicesImpl implements UserServices {
     FriendsRequestMapper friendsRequestMapper;
     @Autowired
     UserMapperCustom userMapperCustom;
+
+    @Autowired
+    ChatMsgMapper chatMsgMapper;
 
 
     ModifiedSnowFlake snowFlake = new ModifiedSnowFlake(1,1);
@@ -117,7 +120,7 @@ public class UserServicesImpl implements UserServices {
         myFriends.setMyFriendUserId(friendId);
         var id = snowFlake.getString_nextId();
         myFriends.setId(id);
-        myFriendsMapper.insert(myFriends);
+        myFriendsMapper.insertSelective(myFriends);
     }
 
     @Override
@@ -128,6 +131,34 @@ public class UserServicesImpl implements UserServices {
     @Override
     public List<MyFriendsVo> queryFriendList(String myId) {
         return userMapperCustom.queryFriendList(myId);
+    }
+
+    @Override
+    public User updataUserInfo(User user) {
+        userMapper.updateByPrimaryKeySelective(user);
+        return userMapper.selectByPrimaryKey(user.getId());
+    }
+
+    @Override
+    public String saveMsg(ChatMSG chatMSG) {
+        // create pojo ChatMsg object
+        ChatMsg msg = new ChatMsg();
+        String msgId = snowFlake.getString_nextId();
+        msg.setId(msgId);
+        msg.setAcceptUserId(chatMSG.getReceiverId());
+        msg.setSendUserId(chatMSG.getSenderId());
+        msg.setCreateTime(new Date());
+        msg.setSignFlag(MsgSignFlagEnum.unsign.type);
+        msg.setMsg(chatMSG.getMsg());
+
+        chatMsgMapper.insert(msg);
+
+        return msgId;
+    }
+
+    @Override
+    public void updateMsgSigned(List<String> msgIdList) {
+        userMapperCustom.batchUpdateMsgSign(msgIdList);
     }
 
 }

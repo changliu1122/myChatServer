@@ -22,3 +22,7 @@ Beanutil.copyproperties copy properties of an object to make another object of o
 
 @RequestParam注解，默认接收Content-Type: application/x-www-form-urlencoded编码格式的数据
 @RequestBody注解，默认接收JSON类型格式的数据。
+
+
+if SpringUtil.applicationContext is null (springutil class does not work), 
+add bean manually in MyChatServerApplication --- or do not forget add @componet on springutil class

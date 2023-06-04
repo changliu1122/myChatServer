@@ -8,4 +8,6 @@ public interface UserMapperCustom {
     List<FriendsRequestVo> queryFriendRequestList(String acceptUserId);
 
     List<MyFriendsVo> queryFriendList(String myId);
+
+    void batchUpdateMsgSign(List<String> msgIdList);
 }

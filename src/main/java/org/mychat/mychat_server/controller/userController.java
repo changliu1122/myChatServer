@@ -36,9 +36,6 @@ public class userController {
     @RequestMapping("/login")
     @ResponseBody
     public MyChatServerJSONResult Login(@RequestBody User user){//axios needs @RequestBody
-        var name =  user.getUsername();
-        System.out.println(name+"----");
-
 
         User userResult = userServices.queryUsername(user.getUsername());
         // user already exist
@@ -134,7 +131,8 @@ public class userController {
     //ignore or accept friend request
     @RequestMapping("/operFriendRequest")
     @ResponseBody
-    public MyChatServerJSONResult opFriendRequest(@RequestBody String acceptUserId, String sendUserId, Integer op){
+    public MyChatServerJSONResult opFriendRequest(@RequestParam String acceptUserId,@RequestParam String sendUserId,@RequestParam Integer op){
+
         FriendsRequest friendsRequest = new FriendsRequest();
         friendsRequest.setSendUserId(sendUserId);
         friendsRequest.setAcceptUserId(acceptUserId);
@@ -158,6 +156,14 @@ public class userController {
         return MyChatServerJSONResult.ok(list);
     }
 
+    @RequestMapping("/changeNickname")
+    @ResponseBody
+    public MyChatServerJSONResult changeNickname(@RequestBody User user){
+        User newUser = userServices.updataUserInfo(user);
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(newUser,userVo);
+        return MyChatServerJSONResult.ok(userVo);
+    }
 
 
 }

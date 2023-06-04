@@ -32,4 +32,14 @@
                 where my.my_user_id = #{myId}
     </select>
 
+<!--    change message status into signed, means received-->
+    <update id="batchUpdateMsgSign">
+        update chat_msg
+        set sign_flag =1
+        where id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
 </mapper>
