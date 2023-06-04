@@ -1,9 +1,15 @@
 package org.mychat.mychat_server.services.impl;
 
 import IdGenerator.ModifiedSnowFlake;
+import com.alibaba.fastjson.JSONObject;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.mychat.mychat_server.enums.MsgActionEnum;
 import org.mychat.mychat_server.enums.MsgSignFlagEnum;
 import org.mychat.mychat_server.mapper.*;
 import org.mychat.mychat_server.netty.ChatMSG;
+import org.mychat.mychat_server.netty.DataContent;
+import org.mychat.mychat_server.netty.UserChanelRelation;
 import org.mychat.mychat_server.pojo.ChatMsg;
 import org.mychat.mychat_server.pojo.FriendsRequest;
 import org.mychat.mychat_server.pojo.MyFriends;
@@ -94,6 +100,17 @@ public class UserServicesImpl implements UserServices {
             friendsRequest.setAcceptUserId(friend.getId());
             friendsRequest.setRequestDateTime(new Date());
             friendsRequestMapper.insert(friendsRequest);
+
+            //server notify the request receiver, when receiver is online, otherwise just
+            // load all request when login, that there is a new friend request
+            Channel receiveChannel = UserChanelRelation.get(friendsRequest.getAcceptUserId());
+            if(receiveChannel != null){ //receiver is online!
+                // update your friends contact list, should contain yourself in his list
+                DataContent dataContent = new DataContent();
+                dataContent.setAction(MsgActionEnum.PULL_FRIEND.type);
+
+                receiveChannel.writeAndFlush(new TextWebSocketFrame(JSONObject.toJSONString(dataContent)));
+            }
             return 1;
         }
         //does exist
@@ -111,6 +128,16 @@ public class UserServicesImpl implements UserServices {
         saveFriend(friendsRequest.getAcceptUserId(), friendsRequest.getSendUserId());
         saveFriend(friendsRequest.getSendUserId(), friendsRequest.getAcceptUserId());
         friendsRequestMapper.deleteFriendRequest(friendsRequest);
+
+        // server notify the request sender actively, that the request was passed
+        Channel sendChannel = UserChanelRelation.get(friendsRequest.getSendUserId());
+        if(sendChannel != null){
+            // update your friends contact list, should contain yourself in his list
+            DataContent dataContent = new DataContent();
+            dataContent.setAction(MsgActionEnum.PULL_FRIEND.type);
+
+            sendChannel.writeAndFlush(new TextWebSocketFrame(JSONObject.toJSONString(dataContent)));
+        }
     }
 
     private void saveFriend(String myId, String friendId){

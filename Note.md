@@ -26,3 +26,10 @@ Beanutil.copyproperties copy properties of an object to make another object of o
 
 if SpringUtil.applicationContext is null (springutil class does not work), 
 add bean manually in MyChatServerApplication --- or do not forget add @componet on springutil class
+
+
+-problem:when you pass a friend request, the request receiver will add new friend through refresh the page in code
+                but who send this friend request must manually refresh the page to add this new friend
+ solution: with netty, server can actively send message to request sender in order to notify the request was passed
+                now you can refresh page to load friend or  
+
