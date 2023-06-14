@@ -188,4 +188,10 @@ public class UserServicesImpl implements UserServices {
         userMapperCustom.batchUpdateMsgSign(msgIdList);
     }
 
+    @Override
+    public List<ChatMsg> getUnreadMsg(String accepterId) {
+
+        return chatMsgMapper.getUnreadMsg(accepterId);
+    }
+
 }

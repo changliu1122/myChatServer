@@ -1,6 +1,7 @@
 package org.mychat.mychat_server.services;
 
 import org.mychat.mychat_server.netty.ChatMSG;
+import org.mychat.mychat_server.pojo.ChatMsg;
 import org.mychat.mychat_server.pojo.FriendsRequest;
 import org.mychat.mychat_server.pojo.User;
 import org.mychat.mychat_server.vo.FriendsRequestVo;
@@ -34,4 +35,6 @@ public interface UserServices {
     String saveMsg(ChatMSG chatMSG);
 
     void updateMsgSigned(List<String> msgIdList);
+
+    List<ChatMsg> getUnreadMsg(String accepterId);
 }

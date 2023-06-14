@@ -1,4 +1,6 @@
 package org.mychat.mychat_server.controller;
+import org.mychat.mychat_server.netty.ChatMSG;
+import org.mychat.mychat_server.pojo.ChatMsg;
 import org.mychat.mychat_server.pojo.FriendsRequest;
 import org.mychat.mychat_server.pojo.User;
 import org.mychat.mychat_server.services.UserServices;
@@ -163,6 +165,14 @@ public class userController {
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(newUser,userVo);
         return MyChatServerJSONResult.ok(userVo);
+    }
+
+    @RequestMapping("/getUnreadMsg")
+    @ResponseBody
+    public MyChatServerJSONResult getUnreadMsg(@RequestBody String accepterId){
+
+        var result = userServices.getUnreadMsg(accepterId);
+        return MyChatServerJSONResult.ok(result);
     }
 
 

@@ -13,11 +13,25 @@
     id, send_user_id, accept_user_id, msg, sign_flag, create_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from chat_msg
     where id = #{id,jdbcType=VARCHAR}
   </select>
+
+<!--  get unread message by accepter id-->
+  <select id="getUnreadMsg" parameterType="String" resultType="org.mychat.mychat_server.pojo.ChatMsg">
+    select
+      ch.id as id,
+      ch.accept_user_id as acceptUserId,
+      ch.send_user_id as sendUserId,
+      ch.msg as msg,
+      ch.create_time as createTime,
+      ch.sign_flag as signFlag
+    from chat_msg ch
+    where accept_user_id = #{accepterId,jdbcType=VARCHAR} and sign_flag = 0
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from chat_msg
     where id = #{id,jdbcType=VARCHAR}
