@@ -36,10 +36,11 @@
 
 
 
-        <table tableName="chat_msg" domainObjectName="ChatMsg" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>
-        <table tableName="friends_request" domainObjectName="FriendsRequest" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>
-        <table tableName="my_friends" domainObjectName="MyFriends" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>
-        <table tableName="chat_users" domainObjectName="User" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>
+<!--        <table tableName="chat_msg" domainObjectName="ChatMsg" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>-->
+<!--        <table tableName="friends_request" domainObjectName="FriendsRequest" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>-->
+<!--        <table tableName="my_friends" domainObjectName="MyFriends" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>-->
+<!--        <table tableName="chat_users" domainObjectName="User" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>-->
+        <table tableName="group_chat" domainObjectName="GroupChatInfo" enableCountByExample = "false" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" > </table>
 
     </context>
 </generatorConfiguration>

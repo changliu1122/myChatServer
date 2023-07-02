@@ -7,6 +7,7 @@ package org.mychat.mychat_server.enums;
 public enum MsgSignFlagEnum {
 	
 	unsign(0, "未签收"),
+	unsignedGroupChat(-1,"unsigned group chat message"),
 	signed(1, "已签收");	
 	
 	public final Integer type;

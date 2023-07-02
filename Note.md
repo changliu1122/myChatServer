@@ -33,3 +33,9 @@ add bean manually in MyChatServerApplication --- or do not forget add @componet 
  solution: with netty, server can actively send message to request sender in order to notify the request was passed
                 now you can refresh page to load friend or  
 
+
+
+在以后用户越来越多的情况 或者
+订单系统购物系统中要用到大量图片的情况
+应该用分库分表把 表中的图片这一项单独拿出来做成一个表， 注意要使用原来那一条数据的相同 primary key
+

@@ -10,7 +10,8 @@ public enum MsgActionEnum {
 	CHAT(2, "聊天消息"),	
 	SIGNED(3, "消息签收"),
 	KEEPALIVE(4, "客户端保持心跳"),
-	PULL_FRIEND(5, "拉取好友");
+	PULL_FRIEND(5, "拉取好友"),
+	GROUP_CHAT(6,"Group chat");
 	
 	public final Integer type;
 	public final String content;

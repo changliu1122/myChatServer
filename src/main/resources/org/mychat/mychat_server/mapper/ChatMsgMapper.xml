@@ -8,9 +8,10 @@
     <result column="msg" jdbcType="VARCHAR" property="msg" />
     <result column="sign_flag" jdbcType="INTEGER" property="signFlag" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="groupId" jdbcType="VARCHAR" property="groupId" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, send_user_id, accept_user_id, msg, sign_flag, create_time
+    id, send_user_id, accept_user_id, msg, sign_flag, create_time,groupId
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -27,9 +28,10 @@
       ch.send_user_id as sendUserId,
       ch.msg as msg,
       ch.create_time as createTime,
-      ch.sign_flag as signFlag
+      ch.sign_flag as signFlag,
+      ch.groupId as groupId
     from chat_msg ch
-    where accept_user_id = #{accepterId,jdbcType=VARCHAR} and sign_flag = 0
+    where accept_user_id = #{accepterId,jdbcType=VARCHAR} and (sign_flag = 0 or sign_flag = -1)
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
@@ -38,10 +40,10 @@
   </delete>
   <insert id="insert" parameterType="org.mychat.mychat_server.pojo.ChatMsg">
     insert into chat_msg (id, send_user_id, accept_user_id, 
-      msg, sign_flag, create_time
+      msg, sign_flag, create_time, groupId
       )
     values (#{id,jdbcType=VARCHAR}, #{sendUserId,jdbcType=VARCHAR}, #{acceptUserId,jdbcType=VARCHAR}, 
-      #{msg,jdbcType=VARCHAR}, #{signFlag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      #{msg,jdbcType=VARCHAR}, #{signFlag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{groupId,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="org.mychat.mychat_server.pojo.ChatMsg">
@@ -65,6 +67,11 @@
       <if test="createTime != null">
         create_time,
       </if>
+      <if test="groupId!= null">
+        groupId,
+      </if>
+
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -84,6 +91,9 @@
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -105,6 +115,9 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="groupId != null">
+        groupId = #{groupId,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -114,7 +127,8 @@
       accept_user_id = #{acceptUserId,jdbcType=VARCHAR},
       msg = #{msg,jdbcType=VARCHAR},
       sign_flag = #{signFlag,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+        groupId = #{groupId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

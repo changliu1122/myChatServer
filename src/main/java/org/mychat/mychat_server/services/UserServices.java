@@ -1,9 +1,12 @@
 package org.mychat.mychat_server.services;
 
 import org.mychat.mychat_server.netty.ChatMSG;
+import org.mychat.mychat_server.netty.DataContent;
 import org.mychat.mychat_server.pojo.ChatMsg;
 import org.mychat.mychat_server.pojo.FriendsRequest;
+import org.mychat.mychat_server.pojo.GroupChatInfo;
 import org.mychat.mychat_server.pojo.User;
+import org.mychat.mychat_server.vo.ChatMsgWithGroupInfo;
 import org.mychat.mychat_server.vo.FriendsRequestVo;
 import org.mychat.mychat_server.vo.MyFriendsVo;
 
@@ -32,9 +35,11 @@ public interface UserServices {
 
     User updataUserInfo(User user);
 
-    String saveMsg(ChatMSG chatMSG);
+    String saveMsg(DataContent dataContent, boolean isGroupChat);
 
     void updateMsgSigned(List<String> msgIdList);
 
-    List<ChatMsg> getUnreadMsg(String accepterId);
+    List<ChatMsgWithGroupInfo> getUnreadMsg(String accepterId);
+
+    String createGroup(GroupChatInfo groupChatInfo);
 }

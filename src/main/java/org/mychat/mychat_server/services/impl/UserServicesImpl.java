@@ -9,12 +9,11 @@ import org.mychat.mychat_server.enums.MsgSignFlagEnum;
 import org.mychat.mychat_server.mapper.*;
 import org.mychat.mychat_server.netty.ChatMSG;
 import org.mychat.mychat_server.netty.DataContent;
+import org.mychat.mychat_server.netty.GroupChat;
 import org.mychat.mychat_server.netty.UserChanelRelation;
-import org.mychat.mychat_server.pojo.ChatMsg;
-import org.mychat.mychat_server.pojo.FriendsRequest;
-import org.mychat.mychat_server.pojo.MyFriends;
-import org.mychat.mychat_server.pojo.User;
+import org.mychat.mychat_server.pojo.*;
 import org.mychat.mychat_server.services.UserServices;
+import org.mychat.mychat_server.vo.ChatMsgWithGroupInfo;
 import org.mychat.mychat_server.vo.FriendsRequestVo;
 import org.mychat.mychat_server.vo.MyFriendsVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +37,9 @@ public class UserServicesImpl implements UserServices {
 
     @Autowired
     ChatMsgMapper chatMsgMapper;
+
+    @Autowired
+    GroupChatInfoMapper groupChatInfoMapper;
 
 
     ModifiedSnowFlake snowFlake = new ModifiedSnowFlake(1,1);
@@ -167,15 +169,23 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public String saveMsg(ChatMSG chatMSG) {
+    public String saveMsg(DataContent dataContent, boolean isGroupChat) {
+        var chatMSG = dataContent.getChatMSG();
         // create pojo ChatMsg object
         ChatMsg msg = new ChatMsg();
+        if(isGroupChat){
+            msg.setSignFlag(MsgSignFlagEnum.unsignedGroupChat.type); //
+            msg.setGroupId(dataContent.getGroupChat().getGroupId());
+        }else{
+            msg.setSignFlag(MsgSignFlagEnum.unsign.type);
+        }
+
         String msgId = snowFlake.getString_nextId();
         msg.setId(msgId);
         msg.setAcceptUserId(chatMSG.getReceiverId());
         msg.setSendUserId(chatMSG.getSenderId());
         msg.setCreateTime(new Date());
-        msg.setSignFlag(MsgSignFlagEnum.unsign.type);
+
         msg.setMsg(chatMSG.getMsg());
 
         chatMsgMapper.insert(msg);
@@ -189,9 +199,61 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public List<ChatMsg> getUnreadMsg(String accepterId) {
+    public List<ChatMsgWithGroupInfo> getUnreadMsg(String accepterId) {
 
-        return chatMsgMapper.getUnreadMsg(accepterId);
+        System.out.println("start check");
+        List<ChatMsgWithGroupInfo> result = new ArrayList<>();
+        var lst = chatMsgMapper.getUnreadMsg(accepterId);
+
+        for(ChatMsg c : lst){
+            ChatMsgWithGroupInfo chatMsgWithGroupInfo = new ChatMsgWithGroupInfo();
+            chatMsgWithGroupInfo.setChatMsg(c);
+            if(c.getGroupId()!= null){
+                var groupId = c.getGroupId();
+                GroupChatInfo g = groupChatInfoMapper.selectByPrimaryKey(groupId);
+                GroupChat groupChat = new GroupChat();
+                groupChat.setGroupId(groupId);
+                groupChat.setGroupName(g.getGroupname());
+
+                List<String> members = new ArrayList<>();
+
+                String m = g.getGroupmembers();
+                m = m.replaceAll("\\[","");
+                m = m.replaceAll("\\]","");
+                m = m.replaceAll("\"","");
+
+                String[] s = m.split(",");
+                for(int i = 0; i<s.length;i++){
+                    members.add(s[i]);
+                }
+                groupChat.setGroupMembers(members);
+
+                for(String i: groupChat.getGroupMembers()){
+                    System.out.println(i);
+                }
+
+                chatMsgWithGroupInfo.setGroupChat(groupChat);
+            }
+            result.add(chatMsgWithGroupInfo);
+        }
+        return result;
+
+    }
+    @Override
+    public String createGroup(GroupChatInfo groupChatInfo) {
+        String id  = snowFlake.getString_nextId();
+        groupChatInfo.setId(id);
+
+        var m = groupChatInfo.getGroupmembers();
+        m = m.replaceAll("\\[","");
+        m = m.replaceAll("\\]","");
+        m = m.replaceAll("\"","");
+
+        groupChatInfo.setGroupmembers(m);
+
+        groupChatInfoMapper.insert(groupChatInfo);
+
+        return id;
     }
 
 }

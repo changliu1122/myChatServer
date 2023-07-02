@@ -2,6 +2,7 @@ package org.mychat.mychat_server.controller;
 import org.mychat.mychat_server.netty.ChatMSG;
 import org.mychat.mychat_server.pojo.ChatMsg;
 import org.mychat.mychat_server.pojo.FriendsRequest;
+import org.mychat.mychat_server.pojo.GroupChatInfo;
 import org.mychat.mychat_server.pojo.User;
 import org.mychat.mychat_server.services.UserServices;
 import org.mychat.mychat_server.utils.MD5Utils;
@@ -173,6 +174,14 @@ public class userController {
 
         var result = userServices.getUnreadMsg(accepterId);
         return MyChatServerJSONResult.ok(result);
+    }
+
+    @RequestMapping("/createGroup")
+    @ResponseBody
+    public MyChatServerJSONResult createGroup(@RequestBody GroupChatInfo groupChatInfo){
+
+        String id = userServices.createGroup(groupChatInfo);
+        return MyChatServerJSONResult.ok(id);
     }
 
 

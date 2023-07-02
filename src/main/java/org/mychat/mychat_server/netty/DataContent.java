@@ -1,6 +1,7 @@
 package org.mychat.mychat_server.netty;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class DataContent implements Serializable {
     // what action
@@ -12,6 +13,15 @@ public class DataContent implements Serializable {
     //extend string
     private String extend;
 
+    private GroupChat groupChat;
+
+    public GroupChat getGroupChat() {
+        return groupChat;
+    }
+
+    public void setGroupChat(GroupChat groupChat) {
+        this.groupChat = groupChat;
+    }
 
     public Integer getAction() {
         return action;
