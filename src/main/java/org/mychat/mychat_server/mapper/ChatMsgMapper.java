@@ -2,9 +2,10 @@ package org.mychat.mychat_server.mapper;
 
 import org.mychat.mychat_server.netty.ChatMSG;
 import org.mychat.mychat_server.pojo.ChatMsg;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+@Component
 public interface ChatMsgMapper {
     int deleteByPrimaryKey(String id);
 

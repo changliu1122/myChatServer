@@ -1,7 +1,9 @@
 package org.mychat.mychat_server.mapper;
 
 import org.mychat.mychat_server.pojo.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface UserMapper {
     int deleteByPrimaryKey(String id);
 

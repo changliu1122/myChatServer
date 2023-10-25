@@ -1,7 +1,9 @@
 package org.mychat.mychat_server.mapper;
 
 import org.mychat.mychat_server.pojo.GroupChatInfo;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface GroupChatInfoMapper {
     int deleteByPrimaryKey(String id);
 
